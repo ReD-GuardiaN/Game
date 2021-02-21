@@ -114,8 +114,6 @@ namespace Game.Game {
         private void Update(object sender, EventArgs e) {
 
 
-
-
             foreach (Enemy enemy in enemies) {
                 enemy.physics.ApplyPhysics();
                 if (enemy.IsOnGround) {
@@ -136,7 +134,7 @@ namespace Game.Game {
             GetKeyboardState(keys);
 
             if ((keys[(int)Keys.A] & 128) == 128) {
-                    Player.Left();
+                Player.Left();
             }
 
             if ((keys[(int)Keys.Space] & 128) == 128) {
@@ -146,23 +144,30 @@ namespace Game.Game {
             }
 
             if ((keys[(int)Keys.D] & 128) == 128) {
-                    Player.Right();
+                Player.Right();
             }
-            Scene.GetScene().Text = cod;
         }
 
 
         [DllImport("user32.dll")]
         public static extern int GetKeyboardState(byte[] keystate);
 
-        string cod = new String(' ', 15);
+        string input = new String(' ', 15);
+
+        byte[][] cheatCodes = {
+            new byte[] { 104, 101, 97, 108, 105, 110, 103, 95, 32, 115, 115 },
+            new byte[] { 102, 108, 121, 121, 108, 102 }
+        };
 
         public void KeyPress(object sender, KeyPressEventArgs e) {
-            cod += e.KeyChar;
-            cod = cod.Substring(1);
-
-            if (cod.EndsWith("healing_")) {
+            input += e.KeyChar;
+            input = input.Substring(1);
+            if ((Keys)e.KeyChar != Keys.Return) return;
+            if (input.Contains(String.Concat(cheatCodes[0].Select(x => (char)x)))) {
                 Player.HPCurrent = Player.HPMax;
+            }
+            else if (input.Contains(String.Concat(cheatCodes[1].Select(x => (char)x)))) {
+                Player.physics.IsOn = !Player.physics.IsOn;
             }
 
 

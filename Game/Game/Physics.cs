@@ -10,7 +10,11 @@ using System.Windows.Forms;
 namespace Game.Game {
     class Physics {
         Control control;
-        public float gravity;
+
+        private float _Gravity;
+        public float Gravity { get { return _Gravity; } set { _Gravity = value > 200 ? 200 : value; } }
+
+        public bool IsOn = true;
         float a;
 
         public float dx;
@@ -21,7 +25,7 @@ namespace Game.Game {
             this.Entity = entity;
             this.control = entity.EntityControl;
 
-            gravity = 0;
+            Gravity = 0;
             a = 0.5f;
             dx = 0;
         }
@@ -33,18 +37,18 @@ namespace Game.Game {
 
 
         public void CalculatePhysics() {
-            gravity += a;
+            Gravity += a;
 
             Point point = control.Location;
 
-            int vectorDirection = gravity > 0 ? 1 : -1;
+            int vectorDirection = Gravity > 0 ? 1 : -1;
 
-            while (point.Y != control.Location.Y + (int)gravity) {
+            while (point.Y != control.Location.Y + (int)Gravity & IsOn) {
                 point.Offset(0, vectorDirection);
                 if (CheckColision(point, "ground")) {
                     Entity.IsOnGround = true;
                     point.Offset(0, -1);
-                    gravity = 0;
+                    Gravity = 0;
                     break;
                 }
                 Entity.IsOnGround = false;
@@ -52,29 +56,6 @@ namespace Game.Game {
             point.Offset((int)dx, 0);
             control.Location = point;
             dx = 0;
-
-            //gravity += a;
-            //int Y = control.Location.Y;
-
-            //int vectorDirection = gravity > 0 ? 1 : -1;
-
-            //scene.Text = gravity.ToString();
-
-            //while (Y != control.Location.Y + (int)gravity) {
-            //    if (CheckColision(control, "ground")) {
-            //        this.Entity.IsOnGround = true;
-            //        if (gravity > 0) {
-            //            gravity = 0;
-            //        }
-            //        Y += vectorDirection - 1;
-            //        break;
-            //    }
-            //    Y += vectorDirection;
-            //}
-
-
-            //control.Location = new Point((int)(control.Location.X + dx), Y);
-            //dx = 0;
         }
 
         Form scene = Scene.GetScene();
@@ -97,7 +78,7 @@ namespace Game.Game {
 
 
         public void AddForce(int force) {
-            gravity = -force;
+            Gravity = -force;
         }
     }
 }

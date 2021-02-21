@@ -18,9 +18,12 @@ namespace Game {
 
         Game.Game game;
 
+
         public Form1() {
             InitializeComponent();
             Scene.SetScene(this);
+
+
 
             //Player entity = new Player(panel1);
 
