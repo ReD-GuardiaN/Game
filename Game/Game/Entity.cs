@@ -17,9 +17,16 @@ namespace Game.Game {
 
         public int HPMax { get; set; }
 
-        public int HPCurrent { get; set; }
+        private int _HPCurrent;
+        public int HPCurrent {
+            get { return _HPCurrent; }
+            set {
+                _HPCurrent = value < 0 ? 0 : value;
+                HPBar?.SetValue(_HPCurrent);
+            }
+        }
 
-        public float Damage { get; set; }
+        public int Damage { get; set; }
 
         public float ReloadTime { get; set; }
 
@@ -37,22 +44,6 @@ namespace Game.Game {
 
 
         public bool IsOnGround = false;
-
-        //public async virtual void ForceOfGravity() {
-
-        //    await Task.Run(() => {
-        //        while (true) {
-        //            foreach (Control item in Scene.SceneControls) {
-        //                MessageBox.Show(item.Name);
-        //                if (Entity_.Bounds.IntersectsWith(item.Bounds)) {
-        //                    foreach (Surfaces surface in (Surfaces[])Enum.GetValues(typeof(Surfaces))) {
-        //                        MessageBox.Show(surface.ToString());
-        //                    }
-        //                }
-        //            }
-        //        }
-        //    });
-        //}
     }
 
 
@@ -63,9 +54,15 @@ namespace Game.Game {
 
         public bool IsJumpAvailable = true;
 
+        public bool IsHitAvailable = true;
+
+        public int HitReloadTime = 400;//ms
+
         public int JumpMaxCount = 1;
 
         public int CurrentJumps = 1;
+
+        public event EventHandler OnPlayerDeath;
 
 
         public Player(Control player) {
@@ -94,12 +91,12 @@ namespace Game.Game {
 
 
         public void Hit(int damage) {
-            //if (HPBar.InvokeRequired) {
-            //    HPBar.Invoke(new MethodInvoker(delegate {
-            //        HPBar.Value -= damage;
-            //    }));
-            //}
-            //else HPBar.Value -= damage;
+            if (!IsHitAvailable) return;
+            this.HPCurrent -= damage;
+            HPBar.SetValue(HPCurrent);
+
+            if (HPCurrent <= 0) OnPlayerDeath?.Invoke(this, EventArgs.Empty);
+            HitCoolDown();
         }
 
 
@@ -108,6 +105,14 @@ namespace Game.Game {
             await Task.Run(() => {
                 Thread.Sleep(JumpReloadTime);
                 IsJumpAvailable = true;
+            });
+        }
+
+        async void HitCoolDown() {
+            IsHitAvailable = false;
+            await Task.Run(() => {
+                Thread.Sleep(HitReloadTime);
+                IsHitAvailable = true;
             });
         }
 

@@ -53,6 +53,7 @@ namespace Game {
                 controls: this.Controls
                 );
 
+
             this.KeyPress += game.KeyPress;
         }
 

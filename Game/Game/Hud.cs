@@ -16,7 +16,7 @@ namespace Game.Game {
 
         Entity Entity { get; set; }
 
-        public ProgressBar progressBar { get; set; }
+        ProgressBar progressBar { get; set; }
 
         Point offset { get; set; }
 
@@ -36,6 +36,8 @@ namespace Game.Game {
             progressBar.Value = this.Entity.HPCurrent; 
             Scene.GetScene().Controls.Add(progressBar);
         }
+
+        public void SetValue(int HP) => progressBar.Value = HP;
 
         public void TrackEntity() {
             Point point = Entity.EntityControl.Location;

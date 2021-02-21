@@ -58,6 +58,7 @@
     <Compile Include="Game\Enemy.cs" />
     <Compile Include="Game\Entity.cs" />
     <Compile Include="Game\Game.cs" />
+    <Compile Include="Game\GameEvents.cs" />
     <Compile Include="Game\Gravity.cs" />
     <Compile Include="Game\Ground.cs" />
     <Compile Include="Game\Hud.cs" />

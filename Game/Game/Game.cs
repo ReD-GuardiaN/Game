@@ -14,6 +14,13 @@ using Timer = System.Windows.Forms.Timer;
 namespace Game.Game {
     class Game {
 
+        Game reload;
+
+        void SaveGame() => reload = this;
+
+        //void ReloadGame() => this = reload;
+
+
         Control.ControlCollection controls;
         Timer timer;
 
@@ -22,6 +29,27 @@ namespace Game.Game {
         public List<Entity> entities = new List<Entity>();
 
         List<Enemy> enemies;
+
+
+        //public Game(Game game) {
+        //    this.controls = game.controls;
+        //    this.Player = game.Player;
+        //    this.enemies = game.enemies;
+        //    this.entities.Add(this.Player);
+        //    foreach (Entity entity in game.enemies) {
+        //        this.entities.Add(entity);
+        //    }
+        //    timer = new Timer();
+
+        //    timer.Interval = 1;
+        //    timer.Tick += Update;
+
+        //    //timer.Start();
+        //    //Player.OnPlayerDeath += (s, e) => {
+        //    //    timer.Stop();
+        //    //};
+        //}
+
 
         public Game(Player player, List<Enemy> enemies, List<Ground> grounds, Control.ControlCollection controls) {
             this.controls = controls;
@@ -36,13 +64,16 @@ namespace Game.Game {
 
             timer = new Timer();
 
-            timer.Interval = 1;
+            timer.Interval = 10;
             timer.Tick += Update;
-
             timer.Start();
 
 
+            //Player.OnPlayerDeath += (s, e) => {
+            //    timer.Stop();
+            //};
         }
+
 
         enum Interact {
             Left,
@@ -50,22 +81,6 @@ namespace Game.Game {
             Top,
             Bottom
         }
-
-
-        public bool CheckColisionn(Control control, params string[] tags) {
-            var temp = Scene.GetScene().GetChildAtPoint(new Point(control.Location.X, control.Location.Y + control.Height + 25));
-
-            if (temp == null) {
-                temp = Scene.GetScene().GetChildAtPoint(new Point(control.Location.X + control.Width, control.Location.Y + control.Height + 25));
-            }
-
-            if (temp == null) return false;
-
-            if (tags.Contains(temp.Tag)) return true;
-
-            return false;
-        }
-
 
         private async void Shake() {
             await Task.Run(() => {
@@ -97,12 +112,19 @@ namespace Game.Game {
 
 
         private void Update(object sender, EventArgs e) {
+
+
+
+
             foreach (Enemy enemy in enemies) {
                 enemy.physics.ApplyPhysics();
                 if (enemy.IsOnGround) {
                     enemy.physics.AddForce(8);
                 }
                 enemy.HPBar.TrackEntity();
+                if (enemy.EntityControl.Bounds.IntersectsWith(Player.EntityControl.Bounds)) {
+                    Player.Hit(enemy.Damage);
+                }
             }
 
             Player.physics.ApplyPhysics();
@@ -126,7 +148,7 @@ namespace Game.Game {
             if ((keys[(int)Keys.D] & 128) == 128) {
                     Player.Right();
             }
-
+            Scene.GetScene().Text = cod;
         }
 
 
@@ -136,9 +158,13 @@ namespace Game.Game {
         string cod = new String(' ', 15);
 
         public void KeyPress(object sender, KeyPressEventArgs e) {
-
             cod += e.KeyChar;
             cod = cod.Substring(1);
+
+            if (cod.EndsWith("healing_")) {
+                Player.HPCurrent = Player.HPMax;
+            }
+
 
         }
 
