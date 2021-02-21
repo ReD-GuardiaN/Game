@@ -36,7 +36,7 @@ namespace Game.Game {
 
             timer = new Timer();
 
-            timer.Interval = 15;
+            timer.Interval = 1;
             timer.Tick += Update;
 
             timer.Start();
@@ -52,8 +52,12 @@ namespace Game.Game {
         }
 
 
-        public bool CheckColision(Control control, params string[] tags) {
-            var temp = Scene.GetScene().GetChildAtPoint(new Point(control.Location.X, control.Location.Y + control.Height));
+        public bool CheckColisionn(Control control, params string[] tags) {
+            var temp = Scene.GetScene().GetChildAtPoint(new Point(control.Location.X, control.Location.Y + control.Height + 25));
+
+            if (temp == null) {
+                temp = Scene.GetScene().GetChildAtPoint(new Point(control.Location.X + control.Width, control.Location.Y + control.Height + 25));
+            }
 
             if (temp == null) return false;
 
@@ -93,24 +97,16 @@ namespace Game.Game {
 
 
         private void Update(object sender, EventArgs e) {
-            //f.Text = Player.HPBar.Value.ToString();
-            //Player.physics.ApplyPhysics();
-
-            foreach (Entity entity in entities) {
-                entity.physics.ApplyPhysics();
-                if (CheckColision(entity.EntityControl, "ground", "wall", "wallR")) {
-                    entity.physics.gravity = 0;
-                    entity.IsOnGround = true;
+            foreach (Enemy enemy in enemies) {
+                enemy.physics.ApplyPhysics();
+                if (enemy.IsOnGround) {
+                    enemy.physics.AddForce(8);
                 }
-                else entity.IsOnGround = false;
-                entity.HPBar.TrackEntity();
+                enemy.HPBar.TrackEntity();
             }
-            if (CheckColision(entities[1].EntityControl, "player")) {
-                entities[1].physics.AddForce(-8);
-            }
-            //if (CheckColision(Player.EntityControl, "death")) {
-            //    Player.EntityControl.Location = new System.Drawing.Point(945, 229);
-            //}
+
+            Player.physics.ApplyPhysics();
+            Player.HPBar.TrackEntity();
 
 
             byte[] keys = new byte[256];
@@ -118,9 +114,7 @@ namespace Game.Game {
             GetKeyboardState(keys);
 
             if ((keys[(int)Keys.A] & 128) == 128) {
-                //if (!CheckColision(Player.EntityControl, "wall")) {
                     Player.Left();
-                //}
             }
 
             if ((keys[(int)Keys.Space] & 128) == 128) {
@@ -130,13 +124,8 @@ namespace Game.Game {
             }
 
             if ((keys[(int)Keys.D] & 128) == 128) {
-                //if (!CheckColision(Player.EntityControl, "wallR")) {
                     Player.Right();
-                //}
             }
-
-            //entities[1].HPBar.TrackEntity();
-
 
         }
 
@@ -144,13 +133,14 @@ namespace Game.Game {
         [DllImport("user32.dll")]
         public static extern int GetKeyboardState(byte[] keystate);
 
-        //public void KeyPress(object sender, KeyPressEventArgs e) {
-        //    if ((Keys)e.KeyChar == Keys.Space) {
-        //        Player.Jump();
-        //    }
+        string cod = new String(' ', 15);
 
+        public void KeyPress(object sender, KeyPressEventArgs e) {
 
-        //}
+            cod += e.KeyChar;
+            cod = cod.Substring(1);
+
+        }
 
     }
 }

@@ -62,6 +62,7 @@
     <Compile Include="Game\Ground.cs" />
     <Compile Include="Game\Hud.cs" />
     <Compile Include="Game\Physics.cs" />
+    <Compile Include="Game\PlayerSkins.cs" />
     <Compile Include="Game\Scene.cs" />
     <Compile Include="Game\TagJsoner.cs" />
     <Compile Include="Game\Transform.cs" />

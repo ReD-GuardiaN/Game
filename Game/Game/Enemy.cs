@@ -11,7 +11,7 @@ namespace Game.Game {
 
         public Enemy(Control control) {
             this.EntityControl = control;
-            this.physics = new Physics(control);
+            this.physics = new Physics(this);
             this.HPBar = new HPBar(this, new Point(0, -10));
 
         }

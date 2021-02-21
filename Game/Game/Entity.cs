@@ -71,16 +71,18 @@ namespace Game.Game {
         public Player(Control player) {
             this.EntityControl = player;
 
-            this.HPBar = new HPBar(this, new Point(0, -10));
 
             this.HPMax = 100;
 
             this.HPCurrent = HPMax;
 
+            this.HPBar = new HPBar(this, new Point(0, -10));
             //this.HP = 100;
             //this.HPBar.Value = this.HP;
 
-            physics = new Physics(player);
+
+
+            physics = new Physics(this);
 
             player.Tag += " player";
 
@@ -128,12 +130,29 @@ namespace Game.Game {
         bool isLeft = true;
         bool isRight = true;
 
+        Image PLeft = Properties.Resources.player6;
+        Image PRight = Properties.Resources.player5;
+
+        Dictionary<Skins, Dictionary<Sides, Image>> PlayerSkins = new Dictionary<Skins, Dictionary<Sides, Image>>() {
+             {Skins.Default,new Dictionary<Sides, Image>() { { Sides.Left, Properties.Resources.player6 } } }
+        };
+
+        enum Skins {
+            Default
+        }
+
+        enum Sides {
+            Left,
+            Right
+        }
+
         public void Left() {
+
             if (IsOnGround) CurrentJumps = JumpMaxCount;
             physics.dx = -5;
             isRight = true;
             if (isLeft) {
-                EntityControl.BackgroundImage = Properties.Resources.player6;
+                EntityControl.BackgroundImage = PlayerSkins[Skins.Default][Sides.Left];
                 isLeft = false;
             }
         }
@@ -143,7 +162,7 @@ namespace Game.Game {
             physics.dx = 5;
             isLeft = true;
             if (isRight) {
-                EntityControl.BackgroundImage = Properties.Resources.player5;
+                EntityControl.BackgroundImage = PRight;
                 isRight = false;
             }
         }
